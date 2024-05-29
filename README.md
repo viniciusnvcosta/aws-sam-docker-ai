@@ -1,6 +1,6 @@
 # aws-sam-docker-ai
 
-This project contains source code and supporting files for an creating an AI inference application for classifying handwritten digits using a Machine Learning model in [PyTorch](https://pytorch.org/) with AWS-SAM Docker image for [python:3.11](https://gallery.ecr.aws/lambda/python).
+This project contains source code and supporting files for an creating an AI inference application for classifying handwritten digits using a Machine Learning model in [PyTorch](https://pytorch.org/) with AWS-SAM Docker image for [lambda/python:3.11](https://gallery.ecr.aws/lambda/python). This repo was based on the [apigw-pytorch](https://github.com/aws/aws-sam-cli-app-templates/tree/master/python3.11/apigw-pytorch) template from SAM-CLI.
 
 ## Project structure:
 
