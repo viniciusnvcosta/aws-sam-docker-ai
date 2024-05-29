@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 5000
+  Api:
+    BinaryMediaTypes:
+      - image/png
+      - image/jpg
+      - image/jpeg
+
+Resources:
+  InferenceFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Properties:
+      PackageType: Image
+      Events:
+        InferenceApi:
+          Type: Api # More info about API Event Source: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-api.html
+          Properties:
+            Path: /predict
+            Method: post
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          FASTAPI_MODULE: "lambda_function.lambda_handler"
+      ImageUri: inferencefunction:python3.11-v1
+      Policies:
+        - AWSLambdaBasicExecutionRole # Ensure the Lambda has basic execution permissions
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: python3.11-v1
+
+Outputs:
+  InferenceFunction:
+    Description: Inference Lambda Function ARN
+    Value: !GetAtt InferenceFunction.Arn
+  InferenceFunctionIamRole:
+    Description: Implicit IAM Role created for Inference function
+    Value: !GetAtt InferenceFunctionRole.Arn
