@@ -60,6 +60,8 @@ def create_application(
     if isinstance(settings, CryptSettings):
         pass
 
+    print("kwargs state: ", kwargs)
+
     # --- app creation ---
     application = FastAPI(**kwargs)
     application.include_router(api_router, prefix=settings.API_PREFIX)

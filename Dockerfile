@@ -10,7 +10,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 - && \
 
 # Run Poetry
 COPY pyproject.toml poetry.lock ./
-RUN poetry config virtualenvs.create false && poetry install --no-root --no-dev
+RUN poetry config virtualenvs.create false && poetry install --no-root --only main
 
 # Install PyTorch and torchvision separately using pip with extra index URL
 RUN python3 -m pip install --no-cache-dir \

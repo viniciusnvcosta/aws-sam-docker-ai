@@ -21,23 +21,34 @@ class MachineLearningModelHandlerScore(object):
     )
 
     @classmethod
-    def predict(cls, input):
-        # Import model
+    def predict(cls, input_image):
+        # Ensure the model is loaded
         model = cls.get_model()
+        if model is None:
+            raise ValueError("Model is not loaded")
+
         # Perform prediction
-        # ++ insert data pipeline
-        probabilities = model.forward(cls.image_transforms(np.array(input)).reshape(-1, 1, 28, 28))
-        label = torch.argmax(probabilities).item()
-        # todo fix return
-        print(label)
-        return label
+        try:
+            transformed_image = cls.image_transforms(np.array(input_image)).reshape(
+                -1, 1, 28, 28
+            )
+            probabilities = model.forward(transformed_image)
+            label = torch.argmax(probabilities).item()
+            return label
+        except Exception as e:
+            raise RuntimeError(f"Error during prediction: {str(e)}")
 
     @classmethod
     def get_model(cls):
-        path = f"{settings.MODEL_PATH}{settings.MODEL_NAME}"
-        model = Net()
-        model.load_state_dict(torch.load(path))
-        model.eval()
+        if cls.model is None:
+            try:
+                path = f"{settings.MODEL_PATH}{settings.MODEL_NAME}"
+                cls.model = Net()
+                cls.model.load_state_dict(torch.load(path))
+                cls.model.eval()
+            except Exception as e:
+                raise RuntimeError(f"Failed to load model: {str(e)}")
+        return cls.model
 
 
 class Net(nn.Module):

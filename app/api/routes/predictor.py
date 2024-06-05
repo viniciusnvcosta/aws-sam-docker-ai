@@ -31,12 +31,15 @@ async def predict(lambda_event: MachineLearningDataInput):
     try:
         image_data = lambda_event.get_image()
         final_score = get_prediction(image_data)
-        return MachineLearningResponse(result=final_score).to_json()
-
-    except Exception as err:  # Handling exceptions
-        raise HTTPException(
-            status_code=500, detail=f"Exception: {err}"
-        )  # Raising HTTP exception with error details
+        result_dict = {"predicted_label": final_score}
+        return MachineLearningResponse(result=result_dict)
+    # Handling Exceptions
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON format")
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=f"Unprocessable Entity: {err}")
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {err}")
 
 
 # Endpoint for handling GET requests to '/health' route
@@ -46,21 +49,22 @@ async def predict(lambda_event: MachineLearningDataInput):
     name="test:get-data",
 )
 async def test():
-    # is_health = False
     try:
         lambda_event = MachineLearningDataInput(
             **json.loads(open(settings.INPUT_EXAMPLE, "r").read())
         )
         image_data = lambda_event.get_image()
         final_score = get_prediction(image_data)
-        return MachineLearningResponse(
-            result=final_score
-        ).to_json()  # Returning health status
 
-    except Exception as err:  # Handling exceptions
-        raise HTTPException(
-            status_code=404, detail=f"Unhealthy: {err}"
-        )  # Raising HTTP exception for unhealthy status
+        result_dict = {"predicted_label": final_score}
+        return MachineLearningResponse(result=result_dict)
+    # Returning health status
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON format")
+    except ValueError as err:
+        raise HTTPException(status_code=422, detail=f"Unprocessable Entity: {err}")
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {err}")
 
 
 # @router.get(
