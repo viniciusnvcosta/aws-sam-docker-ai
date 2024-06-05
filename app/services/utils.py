@@ -1,6 +1,7 @@
 # import tensorflow as tf
 from core.config import settings
-from ultralytics import YOLO
+
+# from ultralytics import YOLO
 
 
 class Utils(object):
