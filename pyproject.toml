@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "aws-sam-docker-ai"
+version = "0.1.0"
+description = "Toy problem for creating an AI inference with AWS-SAM python image with Docker and PyTorch"
+authors = ["Vinícius Costa <viniciusnvcosta47@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pillow = "10.3.0"
+pydantic = "2.7.1"
+pydantic-settings = "2.2.1"
+fastapi = "0.103.2"
+starlette = "0.27.0"
+requests = "2.32.0"
+loguru = "0.7.2"
+mangum = "0.17.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

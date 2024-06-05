@@ -4,9 +4,17 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-COPY requirements.txt ./
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    mv /root/.local/bin/poetry /usr/local/bin/
 
-RUN python3.11 -m pip install -r requirements.txt -t .
+# Run Poetry
+COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.create false && poetry install --no-root --no-dev
+
+# Install PyTorch and torchvision separately using pip with extra index URL
+RUN python3 -m pip install --no-cache-dir \
+    torch==2.0.0+cpu torchvision==0.15.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
 COPY ./app ./
 COPY model /opt/ml/model
