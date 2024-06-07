@@ -14,12 +14,12 @@ all: build validate test-local-invoke sync deploy
 # Build the SAM application
 .PHONY: build
 build:
-	sam build --cached --parallel
+	sam build --cached --parallel --use-container --debug
 
 # Validate the SAM template
 .PHONY: validate
 validate:
-	sam validate
+	sam validate --lint --debug
 
 # Test locally without an API (invoke function directly)
 .PHONY: test-local-invoke

@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.11
+FROM python:3.11.9-slim
 
 ENV PYTHONUNBUFFERED 1
 
@@ -21,4 +21,4 @@ COPY model /opt/ml/model
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
 
-CMD ["lambda_function.lambda_handler"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
