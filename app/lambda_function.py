@@ -20,9 +20,9 @@ except Exception:
 app = create_application(settings=settings)
 
 
-@app.get("/ping", status_code=200, response_model=str, tags=["Ping Pong"])
-def ping() -> str:
-    return "pong"
+# @app.get("/ping", status_code=200, response_model=str, tags=["Ping Pong"])
+# def ping() -> str:
+#     return "pong"
 
 
 # Initialize the Mangum handler with the FastAPI app
