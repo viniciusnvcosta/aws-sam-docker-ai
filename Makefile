@@ -50,7 +50,7 @@ ecr-login:
 .PHONY: deploy
 deploy: create-ecr-repo ecr-login
 	# sam package --s3-bucket $(S3_BUCKET_NAME) --output-template-file packaged.yaml
-	sam deploy --template-file template.yaml --stack-name $(STACK_NAME) --capabilities CAPABILITY_IAM --s3-bucket $(S3_BUCKET_NAME) --image-repository $(ECR_URI) --region $(REGION)
+	sam deploy --config-file samconfig.toml --s3-bucket $(S3_BUCKET_NAME) --image-repository $(ECR_URI) --region $(REGION)
 
 # Clean up generated files
 .PHONY: clean

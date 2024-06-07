@@ -1,14 +1,7 @@
-import uvicorn
-
 from mangum import Mangum
 
-try:
-    from core.config import settings
-    from core.setup import create_application
-except Exception:
-    from app.core.config import settings
-    from app.core.setup import create_application
-
+from app.core.config import settings
+from app.core.setup import create_application
 
 """
     The FastAPI application setup.
@@ -30,6 +23,6 @@ handler = Mangum(app, lifespan="off")
 
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "app.lambda_function:handler", host="0.0.0.0", port="8080", reload=True
-    )
+    import uvicorn
+
+    uvicorn.run("lambda_function:handler", host="0.0.0.0", port="8080", reload=True)

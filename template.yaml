@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Globals:
@@ -19,7 +19,7 @@ Resources:
       Handler: lambda_function.handler
       Runtime: python3.11
       MemorySize: 5000
-      Timeout: 10
+      Timeout: 100
       Environment:
         Variables:
           FASTAPI_MODULE: "lambda_function.handler"
