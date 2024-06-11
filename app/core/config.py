@@ -18,7 +18,7 @@ config = Config(env_path)
 class AppSettings(BaseSettings):
     APP_NAME: str = config("PROJECT_NAME", default="insert_name-ia")
     APP_DESCRIPTION: str | None = config("APP_DESCRIPTION", default=None)
-    APP_VERSION: str | None = config("APP_VERSION", default=None)
+    APP_VERSION: str | None = config("APP_VERSION", default="0.1.0")
     API_PREFIX: str | None = config("API_PREFIX", default="/api")
     DEBUG: bool = config("DEBUG", cast=bool, default=False)
     CONTACT_NAME: str | None = config("CONTACT_NAME", default=None)
