@@ -1,8 +1,7 @@
-import json
+from mangum import Mangum
 
 from core.config import settings
 from core.setup import create_application
-from mangum import Mangum
 
 """
     The FastAPI application setup.
@@ -10,6 +9,20 @@ from mangum import Mangum
     based on the provided settings to deploy the App.
 """
 
+# Create the FastAPI application
 app = create_application(settings=settings)
 
-lambda_handler = Mangum(app)
+
+# @app.get("/ping", status_code=200, response_model=str, tags=["Ping Pong"])
+# def ping() -> str:
+#     return "pong"
+
+
+# Initialize the Mangum handler with the FastAPI app
+handler = Mangum(app, lifespan="off")
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("lambda_function:handler", host="0.0.0.0", port="8080", reload=True)

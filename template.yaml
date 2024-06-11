@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Globals:
@@ -13,27 +13,31 @@ Globals:
 
 Resources:
   InferenceFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Type: AWS::Serverless::Function
     Properties:
-      PackageType: Image
-      Events:
-        InferenceApi:
-          Type: Api # More info about API Event Source: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-api.html
-          Properties:
-            Path: /predict
-            Method: post
-      Architectures:
-        - x86_64
+      CodeUri: app/
+      Handler: lambda_function.handler
+      Runtime: python3.11
       Environment:
         Variables:
-          FASTAPI_MODULE: "lambda_function.lambda_handler"
-      ImageUri: inferencefunction:python3.11-v1
+          FASTAPI_MODULE: "lambda_function.handler"
+      Architectures:
+        - x86_64
+      Events:
+        InferenceApi:
+          Type: Api
+          Properties:
+            Path: /predict
+            Method: POST
+        TestApi:
+          Type: Api
+          Properties:
+            Path: /test
+            Method: GET
       Policies:
-        - AWSLambdaBasicExecutionRole # Ensure the Lambda has basic execution permissions
+        - AWSLambdaBasicExecutionRole
     Metadata:
-      Dockerfile: Dockerfile
-      DockerContext: .
-      DockerTag: python3.11-v1
+      BuildMethod: python3.11
 
 Outputs:
   InferenceFunction:
@@ -42,3 +46,6 @@ Outputs:
   InferenceFunctionIamRole:
     Description: Implicit IAM Role created for Inference function
     Value: !GetAtt InferenceFunctionRole.Arn
+  ApiUrl:
+    Description: "API Gateway endpoint URL for the Inference function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

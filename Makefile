@@ -36,6 +36,7 @@ all: build validate test-local-invoke sync deploy
 # Build the SAM application
 .PHONY: build
 build:
+
 	@echo "Building the SAM application..."
 	sam build --cached --parallel --debug
 
@@ -79,7 +80,6 @@ ecr-login:
 .PHONY: deploy
 deploy: create-ecr-repo ecr-login
 	@echo "Deploying the SAM application..."
-	sam deploy --config-file samconfig.toml --s3-bucket $(S3_BUCKET_NAME) --image-repository $(ECR_URI) --region $(REGION)
 
 # Clean up generated files
 .PHONY: clean
