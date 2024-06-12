@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 # Import variables from .env file
 ifneq (,$(wildcard ./.env))
     include .env
@@ -25,17 +27,61 @@ ifndef S3_BUCKET_NAME
 $(error S3_BUCKET_NAME is not set in .env)
 endif
 
-# Variables
+# Variables definitions
+# -----------------------------------------------------------------------------
+
+ifeq ($(TIMEOUT),)
+TIMEOUT := 60
+endif
+
+ifeq ($(MODEL_PATH),)
+MODEL_PATH := ./ml/model/
+endif
+
+ifeq ($(MODEL_NAME),)
+MODEL_NAME := model.pkl
+endif
+
 ACCOUNT_ID = $(shell aws sts get-caller-identity --query "Account" --output text)
 ECR_URI = $(ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com/$(ECR_REPO_NAME):$(IMAGE_TAG)
 
-# Default target
-.PHONY: all
-all: build validate test-local-invoke sync deploy
+# Target section and Global definitions
+# -----------------------------------------------------------------------------
+.PHONY: help all install run build validate test-local-invoke test-local-api sync create-ecr-repo ecr-login deploy test compose down generate_dot_env
+
+all: install build validate test-local-invoke sync deploy
+
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  install           Install dependencies"
+	@echo "  run               Run the application"
+	@echo "  build             Build the SAM application"
+	@echo "  validate          Validate the SAM template"
+	@echo "  test-local-invoke Test locally with invoke function directly"
+	@echo "  test-local-api    Test locally with an API"
+	@echo "  sync              Sync the SAM application with the AWS CloudFormation stack"
+	@echo "  create-ecr-repo   Create ECR repository"
+	@echo "  ecr-login         Login to ECR"
+	@echo "  deploy            Deploy the SAM application"
+	@echo "  test              Run tests"
+	@echo "  compose           Run docker-compose"
+	@echo "  down              Stop docker-compose"
+	@echo "  generate_dot_env  Generate .env file"
+	@echo "  clean             Clean up"
+
+install: generate_dot_env
+	pip install --upgrade pip
+	poetry install --with dev --sync
+
+run:
+	PYTHONPATH=app/ poetry run uvicorn main:app --reload --host 0.0.0.0 --port 8080
 
 # Build the SAM application
 .PHONY: build
 build:
+
 	@echo "Building the SAM application..."
 	sam build --cached --parallel --debug
 
@@ -45,7 +91,7 @@ validate:
 	@echo "Validating the SAM template..."
 	sam validate --lint --debug
 
-# Test locally without an API (invoke function directly)
+# Test locally with invoke function directly
 .PHONY: test-local-invoke
 test-local-invoke:
 	@echo "Invoking function locally..."
@@ -79,11 +125,34 @@ ecr-login:
 .PHONY: deploy
 deploy: create-ecr-repo ecr-login
 	@echo "Deploying the SAM application..."
-	sam deploy --config-file samconfig.toml --s3-bucket $(S3_BUCKET_NAME) --image-repository $(ECR_URI) --region $(REGION)
 
-# Clean up generated files
+pytest:
+	poetry run pytest tests -vv --show-capture=all
+
+compose: generate_dot_env
+	docker-compose build
+	docker-compose up -d
+
+down:
+	docker-compose down
+
+generate_dot_env:
+	@if [[ ! -e .env ]]; then \
+		cp .env.example .env; \
+	fi
+
+# Clean up
 .PHONY: clean
 clean:
-	@echo "Cleaning up generated files..."
+	@find . -name '*.pyc' -exec rm -rf {} \;
+	@find . -name '__pycache__' -exec rm -rf {} \;
+	@find . -name 'Thumbs.db' -exec rm -rf {} \;
+	@find . -name '*~' -exec rm -rf {} \;
 	rm -rf .aws-sam
-	# rm -f packaged.yaml
+	rm -rf .cache
+	rm -rf build
+	rm -rf dist
+	rm -rf *.egg-info
+	rm -rf htmlcov
+	rm -rf .tox/
+	rm -rf docs/_build

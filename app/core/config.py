@@ -20,6 +20,8 @@ class AppSettings(BaseSettings):
     APP_DESCRIPTION: str | None = config("APP_DESCRIPTION", default=None)
     APP_VERSION: str | None = config("APP_VERSION", default="0.1.0")
     API_PREFIX: str | None = config("API_PREFIX", default="/api")
+    if not API_PREFIX.startswith("/"):
+        API_PREFIX = "/" + API_PREFIX
     DEBUG: bool = config("DEBUG", cast=bool, default=False)
     CONTACT_NAME: str | None = config("CONTACT_NAME", default=None)
     CONTACT_EMAIL: str | None = config("CONTACT_EMAIL", default=None)
@@ -49,9 +51,7 @@ class EnvironmentSettings(BaseSettings):
     # ENVIRONMENT: EnvironmentOption = config("ENVIRONMENT", default="local")
     MODEL_PATH: str = config("MODEL_PATH", default="/opt/ml/")
     MODEL_NAME: str = config("MODEL_NAME", default="model")
-    INPUT_EXAMPLE: str = config(
-        "INPUT_EXAMPLE", default="./events/event.json"
-    )
+    INPUT_EXAMPLE: str = config("INPUT_EXAMPLE", default="./events/event.json")
     IMG_SIZE: int = config("IMG_SIZE", default=640)
 
 

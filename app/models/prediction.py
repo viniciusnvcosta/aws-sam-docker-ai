@@ -1,9 +1,7 @@
 import base64
-import json
 from io import BytesIO
 from typing import List
 
-from fastapi import UploadFile
 from PIL import Image
 from pydantic import BaseModel
 

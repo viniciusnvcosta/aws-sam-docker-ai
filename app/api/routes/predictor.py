@@ -1,4 +1,3 @@
-import io
 import json
 
 from core.config import settings
@@ -26,6 +25,7 @@ def get_prediction(data_point):
     name="predict:get-data",
 )
 async def predict(lambda_event: MachineLearningDataInput):
+
     if not lambda_event:
         raise HTTPException(status_code=404, detail="'event' argument invalid!")
     try:
@@ -49,6 +49,7 @@ async def predict(lambda_event: MachineLearningDataInput):
     name="test:get-data",
 )
 async def test():
+
     try:
         lambda_event = MachineLearningDataInput(
             **json.loads(open(settings.INPUT_EXAMPLE, "r").read())
