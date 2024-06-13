@@ -27,10 +27,6 @@ class MachineLearningResponse(BaseModel):
     #     }
 
 
-class HealthResponse(BaseModel):
-    status: bool
-
-
 class MachineLearningDataInput(BaseModel):
     resource: str
     path: str

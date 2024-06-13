@@ -29,10 +29,11 @@ async def predict(lambda_event: MachineLearningDataInput):
     if not lambda_event:
         raise HTTPException(status_code=404, detail="'event' argument invalid!")
     try:
-        image_data = lambda_event.get_image()
-        final_score = get_prediction(image_data)
-        result_dict = {"predicted_label": final_score}
-        return MachineLearningResponse(result=result_dict)
+        image_point = lambda_event.get_image()
+        prediction = get_prediction(image_point)
+
+        result = {"predicted_label": prediction}
+        return MachineLearningResponse(result=result)
     # Handling Exceptions
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON format")
@@ -42,46 +43,27 @@ async def predict(lambda_event: MachineLearningDataInput):
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {err}")
 
 
-# Endpoint for handling GET requests to '/health' route
+# Endpoint for handling GET requests to a 'health'-like route
 @router.get(
     "/test",
     response_model=MachineLearningResponse,
     name="test:get-data",
 )
 async def test():
-
+    is_health = False
     try:
         lambda_event = MachineLearningDataInput(
             **json.loads(open(settings.INPUT_EXAMPLE, "r").read())
         )
-        image_data = lambda_event.get_image()
-        final_score = get_prediction(image_data)
+        image_point = lambda_event.get_image()
+        prediction = get_prediction(image_point)
 
-        result_dict = {"predicted_label": final_score}
-        return MachineLearningResponse(result=result_dict)
-    # Returning health status
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid JSON format")
-    except ValueError as err:
-        raise HTTPException(status_code=422, detail=f"Unprocessable Entity: {err}")
+        is_health = True
+        result = {
+            "predicted_label": prediction,
+            "is_healthy": is_health,
+        }
+        return MachineLearningResponse(result=result)
+    # Returning unhealth status
     except Exception as err:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {err}")
-
-
-# @router.get(
-#     "/health",
-#     response_model=HealthResponse,
-#     name="health:get-data",
-# )
-# async def health():
-#     is_health = False
-#     try:
-#         test_input = MachineLearningDataInput(
-#             **json.loads(open(settings.INPUT_EXAMPLE, "r").read())
-#         )
-#         test_point = test_input.get_np_array()
-#         get_prediction(test_point)
-#         is_health = True
-#         return HealthResponse(status=is_health)
-#     except Exception:
-#         raise HTTPException(status_code=404, detail="Unhealthy")
+        raise HTTPException(status_code=404, detail=f"Unhealthy: {err}")
