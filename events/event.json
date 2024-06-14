@@ -49,7 +49,7 @@
       "userAgent": "Custom User Agent String",
       "user": null
     },
-    "path": "/predict",
+    "path": "/api/v1/predict",
     "resourcePath": "/{proxy+}",
     "httpMethod": "POST",
     "apiId": "1234567890",
