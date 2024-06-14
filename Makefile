@@ -47,7 +47,7 @@ ECR_URI = $(ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com/$(ECR_REPO_NAME):$(IMAGE
 
 # Target section and Global definitions
 # -----------------------------------------------------------------------------
-.PHONY: help all install run build validate test-local-invoke test-local-api sync create-ecr-repo ecr-login deploy test compose down generate_dot_env
+.PHONY: help all install run build validate test-local-invoke test-local-api sync create-ecr-repo ecr-login deploy pytest compose down generate_dot_env
 
 all: install build validate test-local-invoke sync deploy
 
@@ -65,7 +65,7 @@ help:
 	@echo "  create-ecr-repo   Create ECR repository"
 	@echo "  ecr-login         Login to ECR"
 	@echo "  deploy            Deploy the SAM application"
-	@echo "  test              Run tests"
+	@echo "  pytest            Run static pytests"
 	@echo "  compose           Run docker-compose"
 	@echo "  down              Stop docker-compose"
 	@echo "  generate_dot_env  Generate .env file"

@@ -1,6 +1,6 @@
 {
   "resource": "/{proxy+}",
-  "path": "/predict",
+  "path": "/api/v1/predict",
   "httpMethod": "POST",
   "isBase64Encoded": true,
   "pathParameters": {

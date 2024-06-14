@@ -1,13 +1,11 @@
 import json
 
 from core.config import settings
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException
 from models.prediction import (
-    HealthResponse,
     MachineLearningDataInput,
     MachineLearningResponse,
 )
-from PIL import Image
 from services.predict import MachineLearningModelHandlerScore as model
 
 router = APIRouter()  # Creating an APIRouter instance
